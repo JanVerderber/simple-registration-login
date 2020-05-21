@@ -8,3 +8,4 @@ sendgrid
 google-cloud-tasks
 requests
 bleach
+Flask-SQLAlchemy

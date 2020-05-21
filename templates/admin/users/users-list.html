@@ -1,0 +1,32 @@
+{% extends "/public/base.html" %}
+
+{% block title %}Users list{% endblock title %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="container">
+        <div class="row">
+            <div class="col">
+            </div>
+
+            <div class="col-6">
+                <h1 class="display-4">Users list</h1>
+
+                <ul>
+                    {% for user in users %}
+                        <li>User ID: {{ user.user_id }}</li>
+                        <li>Username: {{ user.username }}</li>
+                        <li>Password: {{ user.password }}</li>
+                        <br><br>
+                    {% endfor %}
+                </ul>
+
+            </div>
+
+            <div class="col">
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock content %}
