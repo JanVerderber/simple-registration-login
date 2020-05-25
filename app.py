@@ -6,6 +6,8 @@ from handlers.public import main as public_main, auth
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app_database.db'
 db.init_app(app)
+with app.app_context():
+    db.create_all()
 
 # PUBLIC URLS
 
