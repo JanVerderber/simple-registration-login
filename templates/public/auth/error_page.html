@@ -1,6 +1,6 @@
 {% extends "/public/base.html" %}
 
-{% block title %}Registration{% endblock title %}
+{% block title %}Error{% endblock title %}
 
 {% block content %}
 <div class="jumbotron">
@@ -10,9 +10,9 @@
             </div>
 
             <div class="col-6">
-                <h1 class="display-4">Registration failed</h1>
+                <h1 class="display-4">Oops, error!</h1>
 
-                <p>The registration failed. Reason: {{ register_error_message }}</p>
+                <p>Error encountered. Reason: {{ error_message }}</p>
             </div>
 
             <div class="col">

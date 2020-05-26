@@ -1,6 +1,8 @@
 import bleach
 import bcrypt
-from datetime import datetime
+import hashlib
+import secrets
+import datetime
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -10,8 +12,8 @@ class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50))
     password = db.Column(db.String(50))
-    session_token_hash = db.Column(db.String(50))
-    session_expiration_date = db.Column(db.DateTime, default=datetime.now)
+    session_token_hash = db.Column(db.String())
+    session_expiration_date = db.Column(db.DateTime)
 
     @classmethod
     def create(cls, username, password):
@@ -38,7 +40,49 @@ class User(db.Model):
                             "Login page and try to log in."
 
     @classmethod
+    def generate_session(cls, username):
+        # generate session token and its hash
+        token = secrets.token_hex()
+        token_hash = hashlib.sha256(str.encode(token)).hexdigest()
+
+        cls.query.filter_by(username=username).update(dict(session_token_hash=token_hash, session_expiration_date=datetime.datetime.now() + datetime.timedelta(days=30)))
+        db.session.commit()
+
+        return token
+
+    @classmethod
+    def verify_session(cls, session_token):
+        if session_token:
+            token_hash = hashlib.sha256(str.encode(session_token)).hexdigest()
+
+            user = cls.query.filter_by(session_token_hash=token_hash).first()
+
+            if not user:
+                return False, None, "A user with this session token does not exist. Try to log in again."
+
+            if user.session_expiration_date > datetime.datetime.now():
+                return True, user, "Success"
+            else:
+                return False, None, "Your session has expired, please login again."
+        else:
+            return False, None, "Please login to access this page."
+
+    @classmethod
+    def delete_session(cls, session_token):
+        if session_token:
+            token_hash = hashlib.sha256(str.encode(session_token)).hexdigest()
+
+            cls.query.filter_by(session_token_hash=token_hash).update(dict(session_token_hash="", session_expiration_date=datetime.datetime(1, 1, 1)))
+            db.session.commit()
+
+            return True, "Logged out"
+
+        else:
+            return False, "Please login to access this page."
+
+    @classmethod
     def get_users(cls):
         users = cls.query.all()
 
         return users
+

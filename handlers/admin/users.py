@@ -1,7 +1,14 @@
 from models.user import User
-from flask import render_template
+from flask import render_template, request
 
 def users_list(**params):
-    params["users"] = User.get_users()
+    token = request.cookies.get('my-simple-app-session')
+    success, user, message = User.verify_session(token)
 
-    return render_template("admin/users/users-list.html", **params)
+    if success:
+        params["users"] = User.get_users()
+        return render_template("admin/users/users-list.html", **params)
+    else:
+        params["error_message"] = message
+        return render_template("public/auth/error_page.html", **params)
+
