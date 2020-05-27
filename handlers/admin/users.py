@@ -6,6 +6,7 @@ def users_list(**params):
     success, user, message = User.verify_session(token)
 
     if success:
+        params["current_user"] = user.username
         params["users"] = User.get_users()
         return render_template("admin/users/users-list.html", **params)
     else:

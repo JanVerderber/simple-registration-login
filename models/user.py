@@ -24,7 +24,6 @@ class User(db.Model):
         user = cls.query.filter_by(username=username).first()
 
         if not user:  # if user does not yet exist, create one
-            hashed = None
             if password:
                 # use bcrypt to hash the password
                 hashed = bcrypt.hashpw(password.encode('utf8'), bcrypt.gensalt())
@@ -79,6 +78,19 @@ class User(db.Model):
 
         else:
             return False, "Please login to access this page."
+
+    @classmethod
+    def update_password(cls, username, new_password):
+        if username and new_password:
+            # use bcrypt to hash the new password
+            hashed = bcrypt.hashpw(new_password.encode('utf8'), bcrypt.gensalt())
+            password_hash = hashed.decode('utf8')
+            cls.query.filter_by(username=username).update(dict(password=password_hash))
+            db.session.commit()
+
+            return True, "Successfully changed password"
+        else:
+            return False, "Unknown error"
 
     @classmethod
     def get_users(cls):

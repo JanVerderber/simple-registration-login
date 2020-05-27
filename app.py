@@ -1,7 +1,7 @@
 from flask import Flask
 from models.user import db
 from handlers.admin import users
-from handlers.profile.auth import logout
+from handlers.profile.auth import logout, change_password
 from handlers.public import main as public_main, auth
 
 app = Flask(__name__)
@@ -27,3 +27,5 @@ app.add_url_rule(rule="/admin/users", endpoint="admin.users.users_list", view_fu
                  methods=["GET"])
 
 app.add_url_rule(rule="/logout", endpoint="profile.auth.logout", view_func=logout, methods=["POST"])
+
+app.add_url_rule(rule="/change-password", endpoint="profile.auth.change_password", view_func=change_password, methods=["GET", "POST"])
