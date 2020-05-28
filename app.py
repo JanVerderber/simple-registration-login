@@ -29,3 +29,6 @@ app.add_url_rule(rule="/admin/users", endpoint="admin.users.users_list", view_fu
 app.add_url_rule(rule="/logout", endpoint="profile.auth.logout", view_func=logout, methods=["POST"])
 
 app.add_url_rule(rule="/change-password", endpoint="profile.auth.change_password", view_func=change_password, methods=["GET", "POST"])
+
+
+app.run(debug=True)

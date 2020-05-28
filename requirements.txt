@@ -1,11 +1,6 @@
 Flask
-mock
-google-auth
 pytest
-google-cloud-ndb
 bcrypt
-sendgrid
-google-cloud-tasks
 requests
 bleach
 Flask-SQLAlchemy
