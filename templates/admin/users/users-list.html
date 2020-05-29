@@ -27,6 +27,7 @@
             <div class="col">
                 <p>You are currently logged in as: <b>{{ current_user }}</b></p>
                 <form method="post" action="{{ url_for('profile.auth.logout') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button class="btn btn-primary" type="submit">Logout</button>
                 </form>
             </div>

@@ -15,6 +15,7 @@
                 <p>You can't access this page if you are already logged in. Please logout if you want to use this page.</p>
 
                 <form method="post" action="{{ url_for('profile.auth.logout') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button class="btn btn-primary" type="submit">Logout</button>
                 </form>
             </div>
