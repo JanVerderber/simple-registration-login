@@ -28,4 +28,4 @@ def login(**params):
 
                 return response
             else:
-                return render_template("public/auth/registration.html", **params)
+                return redirect(url_for("public.auth.registration"))

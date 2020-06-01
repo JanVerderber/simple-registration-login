@@ -28,9 +28,13 @@ def change_password(**params):
     if request.method == "GET":
         token = request.cookies.get('my-simple-app-session')
         success, user, message = User.verify_session(token)
+        current_username = user.username
+
+        csrf_token = User.generate_csrf_token(current_username)
 
         if success:
-            params["current_user"] = user.username
+            params["current_user"] = current_username
+            params["csrf_token"] = csrf_token
             return render_template("public/auth/change_password.html", **params)
         else:
             params["error_message"] = message
@@ -40,16 +44,18 @@ def change_password(**params):
         token = request.cookies.get('my-simple-app-session')
         success, user, message = User.verify_session(token)
 
-        username = user.username
+        current_username = user.username
         current_password = request.form.get("current_password")
         new_password = request.form.get("new_password")
+        form_csrf_token = request.form.get("csrf_token")
+        csrf_validation_success = User.validate_csrf_token(current_username, form_csrf_token)
 
-        if username and current_password and new_password:
+        if current_username and current_password and new_password and csrf_validation_success:
             # checks if user with this username and password exists
-            user = User.query.filter_by(username=username).first()
+            user = User.query.filter_by(username=current_username).first()
 
             if user and bcrypt.checkpw(current_password.encode("utf-8"), user.password.encode("utf-8")):
-                success, message = User.update_password(username, new_password)
+                success, message = User.update_password(current_username, new_password)
 
                 if success:
                     # if password was changed, logout the user so he has to login again

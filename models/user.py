@@ -14,6 +14,7 @@ class User(db.Model):
     password = db.Column(db.String(50))
     session_token_hash = db.Column(db.String())
     session_expiration_date = db.Column(db.DateTime)
+    csrf_token = db.Column(db.String())
 
     @classmethod
     def create(cls, username, password):
@@ -91,6 +92,29 @@ class User(db.Model):
             return True, "Successfully changed password"
         else:
             return False, "Unknown error"
+
+    @classmethod
+    def generate_csrf_token(cls, username):
+        # generate csrf token and save it to User
+        csrf_token = secrets.token_hex()
+
+        cls.query.filter_by(username=username).update(dict(csrf_token=csrf_token))
+        db.session.commit()
+
+        return csrf_token
+
+    @classmethod
+    def validate_csrf_token(cls, username, csrf_token):
+        if username and csrf_token:
+            # validate CSRF token from form
+            user = cls.query.filter_by(username=username, csrf_token=csrf_token).first()
+
+            if user:
+                return True
+            else:
+                return False
+        else:
+            return False
 
     @classmethod
     def get_users(cls):
