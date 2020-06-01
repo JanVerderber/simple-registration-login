@@ -4,4 +4,3 @@ bcrypt
 requests
 bleach
 Flask-SQLAlchemy
-Flask-WTF
